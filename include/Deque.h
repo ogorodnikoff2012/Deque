@@ -138,7 +138,7 @@ private:
         reference operator [](difference_type diff) const {
             return deque_->at(n_ + diff);
         }
-        friend class DequeType;
+        friend DequeType;
     };
 
     RingBuffer<pointer> current_;

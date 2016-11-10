@@ -5,7 +5,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread -O2") #-g -Wall -Wex
 
 include_directories(include)
 link_directories(lib)
-set(SOURCE_FILES main.cpp)
+set(SOURCE_FILES main.cpp tests/PushPopTest.cpp)
 add_executable(Deque ${SOURCE_FILES})
 target_link_libraries(Deque gtest)
 
