@@ -159,4 +159,3 @@ public:
 
 
 #endif //DEQUE_RINGBUFFER_H
-/
