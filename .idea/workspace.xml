@@ -13,46 +13,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4818279a-0c1c-471c-bcc0-2501784fc623" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/libgtest.a" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/Deque.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/CMakeLists.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Deque.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/RingBuffer.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/gtest-death-test.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/gtest-message.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/gtest-param-test.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/gtest-param-test.h.pump" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/gtest-printers.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/gtest-spi.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/gtest-test-part.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/gtest-typed-test.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/gtest.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/gtest_pred_impl.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/gtest_prod.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/custom/gtest-port.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/custom/gtest-printers.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/custom/gtest.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-death-test-internal.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-filepath.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-internal.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-linked_ptr.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-param-util-generated.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-param-util-generated.h.pump" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-param-util.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-port-arch.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-port.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-string.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-tuple.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-tuple.h.pump" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-type-util.h" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/gtest/internal/gtest-type-util.h.pump" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/main.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
     </list>
     <ignored path="Deque.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -94,17 +56,37 @@
       </file>
       <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/README.md">
-          <provider editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="FIRST">
-              <first_editor relative-caret-position="540">
-                <caret line="15" column="52" selection-start-line="15" selection-start-column="52" selection-end-line="15" selection-end-column="52" />
+              <first_editor relative-caret-position="108">
+                <caret line="3" column="16" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
                 <folding />
               </first_editor>
               <second_editor />
             </state>
           </provider>
-          <provider selected="true" editor-type-id="MarkdownFxPreviewEditor">
+          <provider editor-type-id="MarkdownFxPreviewEditor">
             <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Deque.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Deque.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="13320">
+              <caret line="374" column="21" selection-start-line="374" selection-start-column="21" selection-end-line="374" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RingBuffer.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/RingBuffer.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1404">
+              <caret line="160" column="0" selection-start-line="160" selection-start-column="0" selection-end-line="160" selection-end-column="0" />
+              <folding />
+            </state>
           </provider>
         </entry>
       </file>
@@ -119,9 +101,9 @@
         <option value="$PROJECT_DIR$/main.cpp" />
         <option value="$PROJECT_DIR$/scratch/mccme62.cpp" />
         <option value="$PROJECT_DIR$/tests/44573.cpp" />
-        <option value="$PROJECT_DIR$/RingBuffer.h" />
         <option value="$PROJECT_DIR$/Deque.h" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/RingBuffer.h" />
         <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
@@ -133,7 +115,7 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="width" value="3192" />
+    <option name="width" value="3186" />
     <option name="height" value="1750" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -379,18 +361,27 @@
       <updated>1478712718992</updated>
       <workItem from="1478712721297" duration="18946000" />
       <workItem from="1478771858217" duration="4480000" />
-      <workItem from="1478776368465" duration="1527000" />
+      <workItem from="1478776368465" duration="2792000" />
+      <workItem from="1478794902082" duration="248000" />
     </task>
+    <task id="LOCAL-00001" summary="Small bug fixes">
+      <created>1478779660102</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1478779660102</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="24953000" />
+    <option name="totallyTimeSpent" value="26466000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="3192" height="1750" extended-state="4" />
+    <frame x="0" y="0" width="3186" height="1750" extended-state="4" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24944392" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24928367" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294271" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -441,6 +432,10 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Small bug fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Small bug fixes" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
@@ -462,6 +457,36 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1008">
+          <caret line="28" column="10" selection-start-line="28" selection-start-column="10" selection-end-line="28" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="540">
+            <caret line="15" column="52" selection-start-line="15" selection-start-column="52" selection-end-line="15" selection-end-column="52" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="MarkdownFxPreviewEditor">
+        <state />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
@@ -490,6 +515,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -510,6 +536,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="6120">
           <caret line="170" column="8" selection-start-line="170" selection-start-column="8" selection-end-line="170" selection-end-column="8" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -536,13 +563,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tests/tests/07" />
-    <entry file="file://$PROJECT_DIR$/Deque.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13140">
-          <caret line="371" column="0" selection-start-line="371" selection-start-column="0" selection-end-line="371" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tests/tests/07.a" />
     <entry file="file:///usr/include/c++/4.8/bits/move.h">
       <provider selected="true" editor-type-id="text-editor">
@@ -566,13 +586,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tests/44573.cpp" />
-    <entry file="file://$PROJECT_DIR$/RingBuffer.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
@@ -589,17 +602,33 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/RingBuffer.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1404">
+          <caret line="160" column="0" selection-start-line="160" selection-start-column="0" selection-end-line="160" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Deque.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="13320">
+          <caret line="374" column="21" selection-start-line="374" selection-start-column="21" selection-end-line="374" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="FIRST">
-          <first_editor relative-caret-position="540">
-            <caret line="15" column="52" selection-start-line="15" selection-start-column="52" selection-end-line="15" selection-end-column="52" />
+          <first_editor relative-caret-position="108">
+            <caret line="3" column="16" selection-start-line="3" selection-start-column="16" selection-end-line="3" selection-end-column="16" />
             <folding />
           </first_editor>
           <second_editor />
         </state>
       </provider>
-      <provider selected="true" editor-type-id="MarkdownFxPreviewEditor">
+      <provider editor-type-id="MarkdownFxPreviewEditor">
         <state />
       </provider>
     </entry>

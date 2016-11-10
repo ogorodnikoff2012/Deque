@@ -1,7 +1,7 @@
 Deque
 =====
 
-This is my realisation of double-ended queue (aka deque). It supports
+This is my realization of double-ended queue (aka deque). It supports
 following operations:
 
 + `push_back(const T &x)`
