@@ -1,0 +1,8 @@
+build/*
+scratch/*
+*.tgz
+*.aux
+*.log
+*.out
+*.pyg
+*ycm*
