@@ -5,6 +5,8 @@
 #ifndef DEQUE_DEQUE_H
 #define DEQUE_DEQUE_H
 
+#define MAX(X, Y) ((X) < (Y)) ? (Y) : (X)
+
 #include <iterator>
 #include <memory>
 #include <exception>
@@ -41,11 +43,11 @@ private:
             return *this;
         }
 
-        bool operator ==(const DequeIterator &other) {
+        bool operator ==(const DequeIterator &other) const {
             return deque_ == other.deque_ && n_ == other.n_;
         }
 
-        bool operator !=(const DequeIterator &other) {
+        bool operator !=(const DequeIterator &other) const {
             return !operator==(other);
         }
 
@@ -141,8 +143,37 @@ private:
         friend DequeType;
     };
 
-    RingBuffer<pointer> current_;
-    mutable RingBuffer<pointer> small_, big_;
+    struct DataBlock {
+        static const std::size_t SIZE = MAX(4ul, 1024 / sizeof(T));
+        pointer buffer, begin, end;
+        explicit DataBlock(pointer buf, bool fillFromEnd = false) :
+                buffer(buf),
+                begin(buf + (fillFromEnd ? SIZE : 0)),
+                end(buf + (fillFromEnd ? SIZE : 0)) {}
+        DataBlock() :
+                buffer(nullptr),
+                begin(nullptr),
+                end(nullptr) {}
+        DataBlock(const DataBlock &other) :
+                buffer(other.buffer),
+                begin(other.begin),
+                end(other.end) {}
+        bool canPushBack() const {
+            return end - buffer < SIZE;
+        }
+        bool canPushFront() const {
+            return buffer < begin;
+        }
+        bool empty() const {
+            return begin == end;
+        }
+        size_type size() const {
+            return end - begin;
+        }
+    };
+
+    RingBuffer<DataBlock *> current_;
+    mutable RingBuffer<DataBlock *> small_, big_;
     Allocator allocator_;
 
     bool smallUpToDate() const {
@@ -213,104 +244,125 @@ public:
 
     ~Deque() {
         for (size_type i = 0; i < current_.size(); ++i) {
-            allocator_.destroy(current_[i]);
-            allocator_.deallocate(current_[i], 1);
+            for (pointer it = current_[i]->begin; it != current_[i]->end; ++it) {
+                allocator_.destroy(it);
+            }
+            allocator_.deallocate(current_[i]->buffer, DataBlock::SIZE);
+            delete current_[i];
         }
     }
 
     void push_back(const value_type &val) {
-        if (current_.full()) {
-            levelUp();
-        }
-        pointer ptr = allocator_.allocate(1);
-        allocator_.construct(ptr, val);
-        current_.push_back(ptr);
-        if (!small_.full()) {
-            small_.push_back(ptr);
+        if (current_.empty() || !current_.back()->canPushBack()) {
+            if (current_.full()) {
+                levelUp();
+            }
+            pointer ptr = allocator_.allocate(DataBlock::SIZE);
+            DataBlock *block = new DataBlock(ptr);
+            current_.push_back(block);
+            if (!small_.full()) {
+                small_.push_back(block);
+            }
         }
         overtake();
+        allocator_.construct(current_.back()->end++, val);
     }
 
     void pop_back() {
         if (empty()) {
             throw std::runtime_error("Deque is already empty");
         }
-        pointer ptr = current_.back();
         overtake();
-        if (bigUpToDate()) {
-            big_.pop_back();
+        allocator_.destroy(--current_.back()->end);
+        if (current_.back()->empty()) {
+            DataBlock *block = current_.back();
+            if (bigUpToDate()) {
+                big_.pop_back();
+            }
+            if (smallUpToDate() && current_.size() <= small_.maxSize()) {
+                small_.pop_back();
+            }
+            current_.pop_back();
+            if (current_.size() <= small_.maxSize()) {
+                levelDown();
+            }
+            allocator_.deallocate(block->buffer, DataBlock::SIZE);
+            delete block;
         }
-        if (smallUpToDate() && current_.size() <= small_.maxSize()) {
-            small_.pop_back();
-        }
-        current_.pop_back();
-        if (current_.size() <= small_.maxSize()) {
-            levelDown();
-        }
-        allocator_.destroy(ptr);
-        allocator_.deallocate(ptr, 1);
     }
 
     void push_front(const value_type &val) {
-        if (current_.full()) {
-            levelUp();
+        if (current_.empty() || !current_.front()->canPushFront()) {
+            if (current_.full()) {
+                levelUp();
+            }
+            pointer ptr = allocator_.allocate(DataBlock::SIZE);
+            DataBlock *block = new DataBlock(ptr, true);
+            current_.push_front(block);
+            big_.push_front(block);
+            if (small_.full()) {
+                small_.pop_back();
+            }
+            small_.push_front(block);
         }
-        pointer ptr = allocator_.allocate(1);
-        allocator_.construct(ptr, val);
-        current_.push_front(ptr);
-        big_.push_front(ptr);
-        if (small_.full()) {
-            small_.pop_back();
-        }
-        small_.push_front(ptr);
         overtake();
+        allocator_.construct(--current_.front()->begin, val);
     }
 
     void pop_front() {
         if (empty()) {
             throw std::runtime_error("Deque is already empty");
         }
-        pointer ptr = current_.front();
-        if (!big_.empty()) {
-            big_.pop_front();
+        allocator_.destroy(current_.front()->begin++);
+        if (current_.front()->empty()) {
+            DataBlock *block = current_.front();
+            if (!big_.empty()) {
+                big_.pop_front();
+            }
+            if (!small_.empty()) {
+                small_.pop_front();
+            }
+            current_.pop_front();
+            overtake();
+            if (current_.size() <= small_.maxSize()) {
+                levelDown();
+            }
+            allocator_.deallocate(block->buffer, DataBlock::SIZE);
+            delete block;
         }
-        if (!small_.empty()) {
-            small_.pop_front();
-        }
-        current_.pop_front();
-        overtake();
-        if (current_.size() <= small_.maxSize()) {
-            levelDown();
-        }
-        allocator_.destroy(ptr);
-        allocator_.deallocate(ptr, 1);
     }
 
     reference operator [](size_type n) {
-        return *current_[n];
+        size_type offset = current_.front()->begin - current_.front()->buffer;
+        size_type index = n + offset;
+        return current_[index / DataBlock::SIZE]->buffer[index % DataBlock::SIZE];
     }
 
     reference at(size_type n) {
-        return *current_[n];
+        size_type offset = current_.front()->begin - current_.front()->buffer;
+        size_type index = n + offset;
+        return current_[index / DataBlock::SIZE]->buffer[index % DataBlock::SIZE];
     }
     const_reference operator [](size_type n) const {
-        return *current_[n];
+        size_type offset = current_.front()->begin - current_.front()->buffer;
+        size_type index = n + offset;
+        return current_[index / DataBlock::SIZE]->buffer[index % DataBlock::SIZE];
     }
 
     reference back() {
-        return *current_.back();
+        return *(current_.back()->end - 1);
     }
 
     const_reference back() const {
-        return *current_.back();
+        return *(current_.back()->end - 1);
     }
 
     reference front() {
-        return *current_.front();
+        return *current_.front()->begin;
     }
 
     const_reference front() const {
-        return *current_.front();
+        return *current_.front()->begin;
     }
 
     bool empty() const {
@@ -318,7 +370,10 @@ public:
     }
 
     size_type size() const {
-        return current_.size();
+        size_type blocksCount = current_.size();
+        return blocksCount == 0 ? 0 :
+               blocksCount == 1 ? current_.front()->size() :
+               (blocksCount - 2) * DataBlock::SIZE + current_.front()->size() + current_.back()->size();
     }
 
     iterator begin() {
@@ -368,6 +423,14 @@ public:
 
     const_reverse_iterator crend() const {
         return const_reverse_iterator(begin());
+    }
+
+    size_t getBlocksCount() const {
+        return current_.size();
+    }
+
+    const RingBuffer<DataBlock *> &getBlocks() const {
+        return current_;
     }
 };
 

@@ -7,41 +7,52 @@
 
 #include <cstdint>
 #include <algorithm>
+#include <memory>
 
-template <class T>
+template <class T, class Allocator = std::allocator<T>>
 class RingBuffer {
 private:
+    Allocator allocator_;
     T *arr_, *begin_, *end_;
     std::size_t size_, allocSize_;
 
     void reset() {
         if (arr_ != nullptr) {
-            delete[] arr_;
+            allocator_.deallocate(arr_, allocSize_);
             arr_ = nullptr;
         }
     }
 
-    void copy(const RingBuffer &other) {
+    template <class Alloc2>
+    void copy(const RingBuffer<T, Alloc2> &other) {
         reset();
         size_ = other.size_;
         allocSize_ = other.allocSize_;
-        arr_ = new T[allocSize_];
+        arr_ = allocator_.allocate(allocSize_);
         begin_ = end_ = arr_;
         for (std::size_t i = 0; i < size_; ++i) {
             *end_++ = other[i];
         }
     }
 public:
-    RingBuffer(std::size_t size) : arr_(new T[size]), begin_(arr_), end_(arr_), size_(0), allocSize_(size) {}
+    RingBuffer(std::size_t size, const Allocator allocator = Allocator()) :
+            allocator_(allocator),
+            arr_(allocator_.allocate(size)),
+            begin_(arr_),
+            end_(arr_),
+            size_(0),
+            allocSize_(size) {}
     ~RingBuffer() {
         reset();
     }
 
-    RingBuffer(const RingBuffer &other) : arr_(nullptr) {
+    template <class Alloc2>
+    RingBuffer(const RingBuffer<T, Alloc2> &other) : allocator_(Allocator()), arr_(nullptr) {
         copy(other);
     }
 
-    RingBuffer &operator =(const RingBuffer &other) {
+    template <class Alloc2>
+    RingBuffer<T, Allocator> &operator =(const RingBuffer<T, Alloc2> &other) {
         if (arr_ == other.arr_) {
             return *this;
         }
@@ -49,17 +60,18 @@ public:
         return *this;
     }
 
-    void swap(RingBuffer<T> &other) {
+    void swap(RingBuffer<T, Allocator> &other) {
         std::swap(arr_, other.arr_);
         std::swap(begin_, other.begin_);
         std::swap(end_, other.end_);
         std::swap(size_, other.size_);
         std::swap(allocSize_, other.allocSize_);
+        std::swap(allocator_, other.allocator_);
     }
 
     void resetAndResize(std::size_t n) {
         reset();
-        end_ = begin_ = arr_ = new T[n];
+        end_ = begin_ = arr_ = allocator_.allocate(n);
         size_ = 0;
         allocSize_ = n;
     }
