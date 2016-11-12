@@ -6,3 +6,4 @@ scratch/*
 *.out
 *.pyg
 *ycm*
+.idea/*
