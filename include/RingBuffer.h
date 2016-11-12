@@ -8,9 +8,18 @@
 #include <cstdint>
 #include <algorithm>
 #include <memory>
+#include <iterator>
 
 template <class T, class Allocator = std::allocator<T>>
 class RingBuffer {
+public:
+    typedef T value_type;
+    typedef Allocator allocator_type;
+    typedef typename allocator_type::reference reference;
+    typedef typename allocator_type::const_reference const_reference;
+    typedef typename allocator_type::pointer pointer;
+    typedef typename allocator_type::const_pointer const_pointer;
+    typedef std::size_t size_type;
 private:
     Allocator allocator_;
     T *arr_, *begin_, *end_;
@@ -34,7 +43,169 @@ private:
             *end_++ = other[i];
         }
     }
+    template <class IterType, class RefType, class PtrType, class RingBufferType>
+    class RingBufferIterator : public std::iterator<std::random_access_iterator_tag, IterType> {
+    public:
+        typedef std::ptrdiff_t difference_type;
+    private:
+        PtrType begin_, end_, cur_;
+        RingBufferType *ringBuf_;
+        difference_type n_;
+        RingBufferIterator(PtrType begin, PtrType end, PtrType cur, RingBufferType *ringBuf, difference_type n) :
+                begin_(begin),
+                end_(end),
+                cur_(cur),
+                ringBuf_(ringBuf),
+                n_(n)
+        {}
+    public:
+        RingBufferIterator() : begin_(nullptr), end_(nullptr), cur_(nullptr), ringBuf_(nullptr), n_(0) {}
+        RingBufferIterator(const RingBufferIterator &other) :
+                begin_(other.begin_),
+                end_(other.end_),
+                cur_(other.cur_),
+                ringBuf_(other.ringBuf_),
+                n_(other.n_)
+        {}
+
+        RingBufferIterator &operator =(const RingBufferIterator &other) {
+            begin_ = other.begin_;
+            end_ = other.end_;
+            cur_ = other.cur_;
+            ringBuf_ = other.ringBuf_;
+            n_ = other.n_;
+            return *this;
+        }
+
+        bool operator ==(const RingBufferIterator &other) {
+            return ringBuf_ == other.ringBuf_ && n_ == other.n_;
+        }
+
+        bool operator !=(const RingBufferIterator &other) {
+            return !operator==(other);
+
+        }
+
+        RefType operator *() const {
+            return *cur_;
+        }
+
+        PtrType operator ->() const {
+            return cur_;
+        }
+
+        RingBufferIterator &operator ++() {
+            if (cur_ != ringBuf_->end_) {
+                ++n_;
+                ++cur_;
+                if (cur_ == end_) {
+                    cur_ = begin_;
+                }
+            }
+            return *this;
+        }
+
+        const RingBufferIterator operator ++(int) {
+            RingBufferIterator ans = *this;
+            ++(*this);
+            return ans;
+        }
+
+        RingBufferIterator &operator --() {
+            if (cur_ != ringBuf_->begin_) {
+                --n_;
+                if (cur_ == begin_) {
+                    cur_ = end_;
+                }
+                --cur_;
+            }
+            return *this;
+        }
+
+        const RingBufferIterator operator --(int) {
+            RingBufferIterator ans = *this;
+            --(*this);
+            return ans;
+        }
+
+        RingBufferIterator &operator +=(difference_type diff) {
+            n_ += diff;
+            cur_ += diff;
+            if (cur_ >= end_) {
+                cur_ -= (end_ - begin_);
+            }
+            return *this;
+        }
+
+        RingBufferIterator &operator -=(difference_type diff) {
+            n_ -= diff;
+            cur_ -= diff;
+            if (cur_ < begin_) {
+                cur_ += (end_ - begin_);
+            }
+            return *this;
+        }
+
+        const RingBufferIterator operator +(difference_type diff) const {
+            RingBufferType ans = *this;
+            ans += diff;
+            return ans;
+        }
+
+        const RingBufferIterator operator -(difference_type diff) const {
+            RingBufferType ans = *this;
+            ans -= diff;
+            return ans;
+        }
+
+        difference_type operator -(const RingBufferIterator &other) const {
+            if (ringBuf_ != other.ringBuf_) {
+                throw std::runtime_error("Container mismatch");
+            }
+            return n_ - other.n_;
+        }
+
+        bool operator <(const RingBufferIterator &other) const {
+            if (ringBuf_ != other.ringBuf_) {
+                throw std::runtime_error("Container mismatch");
+            }
+            return n_ < other.n_;
+        }
+
+        bool operator >(const RingBufferIterator &other) const {
+            if (ringBuf_ != other.ringBuf_) {
+                throw std::runtime_error("Container mismatch");
+            }
+            return n_ > other.n_;
+        }
+
+        bool operator <=(const RingBufferIterator &other) const {
+            if (ringBuf_ != other.ringBuf_) {
+                throw std::runtime_error("Container mismatch");
+            }
+            return n_ <= other.n_;
+        }
+
+        bool operator >=(const RingBufferIterator &other) const {
+            if (ringBuf_ != other.ringBuf_) {
+                throw std::runtime_error("Container mismatch");
+            }
+            return n_ >= other.n_;
+        }
+
+        RefType operator [](difference_type diff) const {
+            return (*ringBuf_)[n_ + diff];
+        }
+
+        friend RingBufferType;
+    };
 public:
+    typedef RingBufferIterator<value_type, reference, pointer, RingBuffer<T, Allocator>> iterator;
+    typedef RingBufferIterator<const value_type, const_reference, const_pointer, const RingBuffer<T, Allocator>> const_iterator;
+    typedef std::reverse_iterator<iterator> reverse_iterator;
+    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+    typedef typename std::iterator_traits<iterator>::difference_type difference_type;
+
     RingBuffer(std::size_t size, const Allocator allocator = Allocator()) :
             allocator_(allocator),
             arr_(allocator_.allocate(size)),
@@ -166,6 +337,55 @@ public:
 
     const T &back() const {
         return *(end_ == arr_ ? arr_ + allocSize_ - 1 : end_ - 1);
+    }
+
+    iterator begin() {
+        return iterator(arr_, arr_ + allocSize_, begin_, 0, this);
+    }
+
+    const_iterator begin() const {
+        return const_iterator(arr_, arr_ + allocSize_, begin_, 0, this);
+    }
+
+    const_iterator cbegin() const {
+        return const_iterator(arr_, arr_ + allocSize_, begin_, 0, this);
+    }
+
+    iterator end() {
+        return iterator(arr_, arr_ + allocSize_, end_, size_, this);
+    }
+
+    const_iterator end() const {
+        return const_iterator(arr_, arr_ + allocSize_, end_, size_, this);
+    }
+
+    const_iterator cend() const {
+        return const_iterator(arr_, arr_ + allocSize_, end_, size_, this);
+    }
+
+
+    reverse_iterator rbegin() {
+        return reverse_iterator(end());
+    }
+
+    const_reverse_iterator rbegin() const {
+        return const_reverse_iterator(end());
+    }
+
+    const_reverse_iterator crbegin() const {
+        return const_reverse_iterator(end());
+    }
+
+    reverse_iterator rend() {
+        return reverse_iterator(begin());
+    }
+
+    const_reverse_iterator rend() const {
+        return const_reverse_iterator(begin());
+    }
+
+    const_reverse_iterator crend() const {
+        return const_reverse_iterator(begin());
     }
 };
 

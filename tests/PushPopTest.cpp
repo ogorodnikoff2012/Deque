@@ -153,6 +153,43 @@ TEST_P(PushPopTest, TimeMeasurement) {
                 << "My Deque time: " << myDequeMs << " ms." << std::endl;
 }
 
+TEST_P(PushPopTest, SortTimeMeasurement) {
+    std::size_t n = GetParam();
+
+    std::cout << "Deque size: " <<  n << std::endl;
+
+    resetRandom();
+    MEASURE_TIME_BEGIN(stdDequeMs);
+    for (std::size_t i = 0; i < n; ++i) {
+        int x = nextRandom();
+        stdDeque.push_back(x);
+        int y = nextRandom();
+        stdDeque.push_front(y);
+    }
+
+    std::sort(stdDeque.begin(), stdDeque.end());
+    MEASURE_TIME_END(stdDequeMs);
+
+    resetRandom();
+    MEASURE_TIME_BEGIN(myDequeMs);
+    for (std::size_t i = 0; i < n; ++i) {
+        int x = nextRandom();
+        myDeque.push_back(x);
+        int y = nextRandom();
+        myDeque.push_front(y);
+    }
+
+    std::sort(myDeque.begin(), myDeque.end());
+    MEASURE_TIME_END(myDequeMs);
+
+    auto p = std::mismatch(myDeque.begin(), myDeque.end(), stdDeque.begin());
+    ASSERT_EQ(p.first, myDeque.end());
+
+    std::cout   << "std::deque time: " << stdDequeMs << " ms." << std::endl
+                << "My Deque time: " << myDequeMs << " ms." << std::endl;
+
+}
+
 INSTANTIATE_TEST_CASE_P(PushPopTest,
                         PushPopTest,
                         testing::Values(10, 100, 1000, 4000, 10000, 100000, 1000000, 10000000));

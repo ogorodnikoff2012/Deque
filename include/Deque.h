@@ -24,7 +24,7 @@ public:
     typedef typename allocator_type::const_pointer const_pointer;
     typedef std::size_t size_type;
 private:
-    template <class IterType, class DequeType>
+    template <class IterType, class RefType, class PtrType, class DequeType>
     class DequeIterator : public std::iterator<std::random_access_iterator_tag, IterType> {
     public:
         typedef std::ptrdiff_t difference_type;
@@ -51,11 +51,11 @@ private:
             return !operator==(other);
         }
 
-        reference operator *() const {
+        RefType operator *() const {
             return deque_->at(n_);
         }
 
-        pointer operator ->() const {
+        PtrType operator ->() const {
             return &deque_->at(n_);
         }
 
@@ -137,7 +137,7 @@ private:
             return *this;
         }
 
-        reference operator [](difference_type diff) const {
+        RefType operator [](difference_type diff) const {
             return deque_->at(n_ + diff);
         }
         friend DequeType;
@@ -220,8 +220,8 @@ private:
     }
 
 public:
-    typedef DequeIterator<value_type, Deque<T, Allocator>> iterator;
-    typedef DequeIterator<const value_type, const Deque<T, Allocator>> const_iterator;
+    typedef DequeIterator<value_type, reference, pointer, Deque<T, Allocator>> iterator;
+    typedef DequeIterator<const value_type, reference, pointer, const Deque<T, Allocator>> const_iterator;
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
     typedef typename std::iterator_traits<iterator>::difference_type difference_type;
@@ -389,15 +389,15 @@ public:
     }
 
     iterator end() {
-        return iterator(current_.size(), this);
+        return iterator(size(), this);
     }
 
     const_iterator end() const {
-        return const_iterator(current_.size(), this);
+        return const_iterator(size(), this);
     }
 
     const_iterator cend() const {
-        return const_iterator(current_.size(), this);
+        return const_iterator(size(), this);
     }
 
 
