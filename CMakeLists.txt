@@ -15,5 +15,3 @@ link_directories(${CMAKE_SOURCE_DIR}/build)
 set(SOURCE_FILES main.cpp tests/PushPopTest.cpp tests/DummyTest.cpp)
 add_executable(Deque ${SOURCE_FILES})
 target_link_libraries(Deque gtest)
-
-# add_executable(DequeTest tests/44573.cpp)
