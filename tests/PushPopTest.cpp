@@ -11,7 +11,7 @@
 class PushPopTest : public testing::TestWithParam<std::size_t> {
 protected:
     virtual void SetUp() {
-
+        std::cout << "Deque size: " << GetParam() << std::endl;
     }
 
     virtual void TearDown() {
@@ -50,7 +50,6 @@ void debugPrintDeque(const Deque<T> &deque) {
 
 TEST_P(PushPopTest, FifoOrder) {
     std::size_t n = GetParam();
-    std::cout << "Deque size: " <<  n << std::endl;
     for (std::size_t i = 0; i < n; ++i) {
         int x = nextRandom();
         myDeque.push_back(x);
@@ -74,7 +73,6 @@ TEST_P(PushPopTest, FifoOrder) {
 TEST_P(PushPopTest, LifoOrder) {
     std::size_t n = GetParam();
 
-    std::cout << "Deque size: " <<  n << std::endl;
     for (std::size_t i = 0; i < n; ++i) {
         int x = nextRandom();
         myDeque.push_back(x);
@@ -95,7 +93,6 @@ TEST_P(PushPopTest, LifoOrder) {
 TEST_P(PushPopTest, RandomOrder) {
     std::size_t n = GetParam();
 
-    std::cout << "Deque size: " <<  n << std::endl;
     for (std::size_t i = 0; i < n; ++i) {
         int x = nextRandom();
         myDeque.push_back(x);
@@ -118,8 +115,6 @@ TEST_P(PushPopTest, RandomOrder) {
 
 TEST_P(PushPopTest, TimeMeasurement) {
     std::size_t n = GetParam();
-
-    std::cout << "Deque size: " <<  n << std::endl;
 
     resetRandom();
     MEASURE_TIME_BEGIN(stdDequeMs);
@@ -155,8 +150,6 @@ TEST_P(PushPopTest, TimeMeasurement) {
 
 TEST_P(PushPopTest, SortTimeMeasurement) {
     std::size_t n = GetParam();
-
-    std::cout << "Deque size: " <<  n << std::endl;
 
     resetRandom();
     MEASURE_TIME_BEGIN(stdDequeMs);
