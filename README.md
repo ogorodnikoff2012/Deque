@@ -15,5 +15,4 @@ All these operations use *O(1)* time (not amortized). This structure uses
 
 Also this structure provides random access iterators.
 
-This project uses Google Test. Compile your copy of this library and
-put it in `lib/`.
+This project uses Google Test. 
