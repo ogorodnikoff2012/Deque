@@ -219,6 +219,35 @@ private:
         small_.resetAndResize(current_.maxSize() / 2);
     }
 
+    void reset() {
+        for (size_type i = 0; i < current_.size(); ++i) {
+            for (pointer it = current_[i]->begin; it != current_[i]->end; ++it) {
+                allocator_.destroy(it);
+            }
+            allocator_.deallocate(current_[i]->buffer, DataBlock::SIZE);
+            delete current_[i];
+        }
+    }
+
+    template <class Alloc2>
+    void copy(const Deque<T, Alloc2> &other) {
+        for (size_type i = 0; i != other.current_.size(); ++i) {
+            DataBlock *block = new DataBlock(*other.current_[i]);
+            auto beginOffset = block->begin - block->buffer;
+            auto endOffset = block->end - block->buffer;
+
+            pointer ptr = allocator_.allocate(DataBlock::SIZE);
+            std::copy(block->begin, block->end, ptr + beginOffset);
+            block->begin = ptr + beginOffset;
+            block->end = ptr + endOffset;
+            block->buffer = ptr;
+
+            small_.push_back(block);
+            current_.push_back(block);
+            big_.push_back(block);
+        }
+    }
+
 public:
     typedef DequeIterator<value_type, reference, pointer, Deque<T, Allocator>> iterator;
     typedef DequeIterator<const value_type, reference, pointer, const Deque<T, Allocator>> const_iterator;
@@ -235,21 +264,29 @@ public:
             allocator_(allocator)
     {}
 
+//    template <class Alloc2>
     Deque(const Deque &other) :
-            small_(other.small_),
-            current_(other.current_),
-            big_(other.big_),
-            allocator_(other.allocator_)
-    {}
+            small_(other.small_.maxSize()),
+            current_(other.current_.maxSize()),
+            big_(other.big_.maxSize()),
+            allocator_() {
+        copy(other);
+    }
+
+    template <class Alloc2>
+    Deque &operator =(const Deque<T, Alloc2> &other) {
+        if (&other != this) {
+            reset();
+            small_.resetAndResize(other.small_.maxSize());
+            current_.resetAndResize(other.current_.maxSize());
+            big_.resetAndResize(other.big_.maxSize());
+            copy(other);
+        }
+        return *this;
+    }
 
     ~Deque() {
-        for (size_type i = 0; i < current_.size(); ++i) {
-            for (pointer it = current_[i]->begin; it != current_[i]->end; ++it) {
-                allocator_.destroy(it);
-            }
-            allocator_.deallocate(current_[i]->buffer, DataBlock::SIZE);
-            delete current_[i];
-        }
+        reset();
     }
 
     void push_back(const value_type &val) {
