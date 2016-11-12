@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <Deque.h>
 #include <deque>
+#include <chrono>
 
 class PushPopTest : public testing::TestWithParam<std::size_t> {
 protected:
@@ -24,6 +25,10 @@ protected:
         return _X;
     }
 
+    void resetRandom() {
+        _X = 0;
+    }
+
     Deque<int> myDeque;
     std::deque<int> stdDeque;
 };
@@ -37,6 +42,11 @@ void debugPrintDeque(const Deque<T> &deque) {
     }
     std::cout << std::endl;
 }
+
+#define MEASURE_TIME_BEGIN(NAME) std::chrono::steady_clock::time_point __##NAME##_begin = std::chrono::steady_clock::now()
+#define MEASURE_TIME_END(NAME)  std::chrono::steady_clock::time_point __##NAME##_end = std::chrono::steady_clock::now(); \
+                                double NAME = std::chrono::duration_cast<std::chrono::nanoseconds>(__##NAME##_end - __##NAME##_begin).count() / 1e6;
+
 
 TEST_P(PushPopTest, FifoOrder) {
     std::size_t n = GetParam();
@@ -61,7 +71,88 @@ TEST_P(PushPopTest, FifoOrder) {
     }
 }
 
+TEST_P(PushPopTest, LifoOrder) {
+    std::size_t n = GetParam();
+
+    std::cout << "Deque size: " <<  n << std::endl;
+    for (std::size_t i = 0; i < n; ++i) {
+        int x = nextRandom();
+        myDeque.push_back(x);
+        stdDeque.push_back(x);
+    }
+
+    ASSERT_EQ(myDeque.size(), stdDeque.size());
+
+    while (!stdDeque.empty()) {
+        int s = stdDeque.back();
+        int m = myDeque.back();
+        ASSERT_EQ(s, m);
+        stdDeque.pop_back();
+        myDeque.pop_back();
+    }
+}
+
+TEST_P(PushPopTest, RandomOrder) {
+    std::size_t n = GetParam();
+
+    std::cout << "Deque size: " <<  n << std::endl;
+    for (std::size_t i = 0; i < n; ++i) {
+        int x = nextRandom();
+        myDeque.push_back(x);
+        stdDeque.push_back(x);
+        int y = nextRandom();
+        myDeque.push_front(y);
+        stdDeque.push_front(y);
+    }
+
+    ASSERT_EQ(myDeque.size(), stdDeque.size());
+
+    while (!stdDeque.empty()) {
+        int s = stdDeque.back();
+        int m = myDeque.back();
+        ASSERT_EQ(s, m);
+        stdDeque.pop_back();
+        myDeque.pop_back();
+    }
+}
+
+TEST_P(PushPopTest, TimeMeasurement) {
+    std::size_t n = GetParam();
+
+    std::cout << "Deque size: " <<  n << std::endl;
+
+    resetRandom();
+    MEASURE_TIME_BEGIN(stdDequeMs);
+    for (std::size_t i = 0; i < n; ++i) {
+        int x = nextRandom();
+        stdDeque.push_back(x);
+        int y = nextRandom();
+        stdDeque.push_front(y);
+    }
+
+    while (!stdDeque.empty()) {
+        stdDeque.pop_back();
+    }
+    MEASURE_TIME_END(stdDequeMs);
+
+    resetRandom();
+    MEASURE_TIME_BEGIN(myDequeMs);
+    for (std::size_t i = 0; i < n; ++i) {
+        int x = nextRandom();
+        myDeque.push_back(x);
+        int y = nextRandom();
+        myDeque.push_front(y);
+    }
+
+    while (!myDeque.empty()) {
+        myDeque.pop_back();
+    }
+    MEASURE_TIME_END(myDequeMs);
+
+    std::cout   << "std::deque time: " << stdDequeMs << " ms." << std::endl
+                << "My Deque time: " << myDequeMs << " ms." << std::endl;
+}
+
 INSTANTIATE_TEST_CASE_P(PushPopTest,
                         PushPopTest,
                         testing::Values(10, 100, 1000, 4000, 10000, 100000, 1000000, 10000000));
-//                        testing::Values(4000));
