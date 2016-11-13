@@ -33,16 +33,6 @@ protected:
     std::deque<int> stdDeque;
 };
 
-template <class T>
-void debugPrintDeque(const Deque<T> &deque) {
-    std::cout << "Blocks count: " << deque.getBlocksCount() << std::endl;
-    auto &buffer = deque.getBlocks();
-    for (std::size_t i = 0; i < buffer.size(); ++i) {
-        std::cout << buffer[i]->size() << ' ';
-    }
-    std::cout << std::endl;
-}
-
 #define MEASURE_TIME_BEGIN(NAME) std::chrono::steady_clock::time_point __##NAME##_begin = std::chrono::steady_clock::now()
 #define MEASURE_TIME_END(NAME)  std::chrono::steady_clock::time_point __##NAME##_end = std::chrono::steady_clock::now(); \
                                 double NAME = std::chrono::duration_cast<std::chrono::nanoseconds>(__##NAME##_end - __##NAME##_begin).count() / 1e6;

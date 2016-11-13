@@ -240,7 +240,7 @@ public:
         std::swap(allocator_, other.allocator_);
     }
 
-    void resetAndResize(std::size_t n) {
+    void reset_and_resize(std::size_t n) {
         reset();
         end_ = begin_ = arr_ = allocator_.allocate(n);
         size_ = 0;
@@ -259,7 +259,7 @@ public:
         return size_;
     }
 
-    std::size_t maxSize() const {
+    std::size_t max_size() const {
         return allocSize_;
     }
 

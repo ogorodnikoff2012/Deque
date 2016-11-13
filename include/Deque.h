@@ -158,10 +158,10 @@ private:
                 buffer(other.buffer),
                 begin(other.begin),
                 end(other.end) {}
-        bool canPushBack() const {
+        bool can_push_back() const {
             return end - buffer < SIZE;
         }
-        bool canPushFront() const {
+        bool can_push_front() const {
             return buffer < begin;
         }
         bool empty() const {
@@ -176,47 +176,47 @@ private:
     mutable RingBuffer<DataBlock *> small_, big_;
     Allocator allocator_;
 
-    bool smallUpToDate() const {
+    bool small_up_to_date() const {
         return small_.full() || small_.size() == current_.size();
     }
 
-    void smallOvertake() const {
-        if (!smallUpToDate()) {
+    void small_overtake() const {
+        if (!small_up_to_date()) {
             small_.push_back(current_[small_.size()]);
         }
     }
 
-    bool bigUpToDate() const {
+    bool big_up_to_date() const {
         return big_.size() == current_.size();
     }
 
-    void bigOvertake() const {
-        if (!bigUpToDate()) {
+    void big_overtake() const {
+        if (!big_up_to_date()) {
             big_.push_back(current_[big_.size()]);
         }
     }
 
     void overtake() const {
-        smallOvertake();
-        smallOvertake();
-        bigOvertake();
-        bigOvertake();
-        bigOvertake();
+        small_overtake();
+        small_overtake();
+        big_overtake();
+        big_overtake();
+        big_overtake();
     }
 
-    void levelUp() {
+    void level_up() {
         current_.swap(small_);
         current_.swap(big_);
-        big_.resetAndResize(2 * current_.maxSize());
+        big_.reset_and_resize(2 * current_.max_size());
     }
 
-    void levelDown() {
-        if (small_.maxSize() < 2 * MIN_BUFFER_SIZE) {
+    void level_down() {
+        if (small_.max_size() < 2 * MIN_BUFFER_SIZE) {
             return;
         }
         current_.swap(big_);
         current_.swap(small_);
-        small_.resetAndResize(current_.maxSize() / 2);
+        small_.reset_and_resize(current_.max_size() / 2);
     }
 
     void reset() {
@@ -272,9 +272,9 @@ public:
 
 //    template <class Alloc2>
     Deque(const Deque &other) :
-            small_(other.small_.maxSize()),
-            current_(other.current_.maxSize()),
-            big_(other.big_.maxSize()),
+            small_(other.small_.max_size()),
+            current_(other.current_.max_size()),
+            big_(other.big_.max_size()),
             allocator_() {
         copy(other);
     }
@@ -283,9 +283,9 @@ public:
     Deque &operator =(const Deque<T, Alloc2> &other) {
         if (&other != this) {
             reset();
-            small_.resetAndResize(other.small_.maxSize());
-            current_.resetAndResize(other.current_.maxSize());
-            big_.resetAndResize(other.big_.maxSize());
+            small_.reset_and_resize(other.small_.max_size());
+            current_.reset_and_resize(other.current_.max_size());
+            big_.reset_and_resize(other.big_.max_size());
             copy(other);
         }
         return *this;
@@ -296,9 +296,9 @@ public:
     }
 
     void push_back(const value_type &val) {
-        if (current_.empty() || !current_.back()->canPushBack()) {
+        if (current_.empty() || !current_.back()->can_push_back()) {
             if (current_.full()) {
-                levelUp();
+                level_up();
             }
             pointer ptr = allocator_.allocate(DataBlock::SIZE);
             DataBlock *block = new DataBlock(ptr);
@@ -319,15 +319,15 @@ public:
         allocator_.destroy(--current_.back()->end);
         if (current_.back()->empty()) {
             DataBlock *block = current_.back();
-            if (bigUpToDate()) {
+            if (big_up_to_date()) {
                 big_.pop_back();
             }
-            if (smallUpToDate() && current_.size() <= small_.maxSize()) {
+            if (small_up_to_date() && current_.size() <= small_.max_size()) {
                 small_.pop_back();
             }
             current_.pop_back();
-            if (current_.size() <= small_.maxSize()) {
-                levelDown();
+            if (current_.size() <= small_.max_size()) {
+                level_down();
             }
             allocator_.deallocate(block->buffer, DataBlock::SIZE);
             delete block;
@@ -335,9 +335,9 @@ public:
     }
 
     void push_front(const value_type &val) {
-        if (current_.empty() || !current_.front()->canPushFront()) {
+        if (current_.empty() || !current_.front()->can_push_front()) {
             if (current_.full()) {
-                levelUp();
+                level_up();
             }
             pointer ptr = allocator_.allocate(DataBlock::SIZE);
             DataBlock *block = new DataBlock(ptr, true);
@@ -367,8 +367,8 @@ public:
             }
             current_.pop_front();
             overtake();
-            if (current_.size() <= small_.maxSize()) {
-                levelDown();
+            if (current_.size() <= small_.max_size()) {
+                level_down();
             }
             allocator_.deallocate(block->buffer, DataBlock::SIZE);
             delete block;
