@@ -11,6 +11,6 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/googletest/googletest)
 
 include_directories(include googletest/googletest/include)
 link_directories(${LIBRARY_OUTUT_PATH})
-set(SOURCE_FILES main.cpp tests/PushPopTest.cpp tests/DummyTest.cpp)
+set(SOURCE_FILES main.cpp tests/PushPopTest.cpp tests/DummyTest.cpp tests/IteratorTest.cpp tests/AdaptorTest.cpp)
 add_executable(Deque ${SOURCE_FILES})
 target_link_libraries(Deque gtest)

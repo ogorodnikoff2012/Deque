@@ -147,13 +147,13 @@ private:
         }
 
         const RingBufferIterator operator +(difference_type diff) const {
-            RingBufferType ans = *this;
+            RingBufferIterator ans = *this;
             ans += diff;
             return ans;
         }
 
         const RingBufferIterator operator -(difference_type diff) const {
-            RingBufferType ans = *this;
+            RingBufferIterator ans = *this;
             ans -= diff;
             return ans;
         }
@@ -340,27 +340,27 @@ public:
     }
 
     iterator begin() {
-        return iterator(arr_, arr_ + allocSize_, begin_, 0, this);
+        return iterator(arr_, arr_ + allocSize_, begin_, this, 0);
     }
 
     const_iterator begin() const {
-        return const_iterator(arr_, arr_ + allocSize_, begin_, 0, this);
+        return const_iterator(arr_, arr_ + allocSize_, begin_, this, 0);
     }
 
     const_iterator cbegin() const {
-        return const_iterator(arr_, arr_ + allocSize_, begin_, 0, this);
+        return const_iterator(arr_, arr_ + allocSize_, begin_, this, 0);
     }
 
     iterator end() {
-        return iterator(arr_, arr_ + allocSize_, end_, size_, this);
+        return iterator(arr_, arr_ + allocSize_, end_, this, size_);
     }
 
     const_iterator end() const {
-        return const_iterator(arr_, arr_ + allocSize_, end_, size_, this);
+        return const_iterator(arr_, arr_ + allocSize_, end_, this, size_);
     }
 
     const_iterator cend() const {
-        return const_iterator(arr_, arr_ + allocSize_, end_, size_, this);
+        return const_iterator(arr_, arr_ + allocSize_, end_, this, size_);
     }
 
 

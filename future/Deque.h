@@ -24,21 +24,36 @@ public:
     typedef typename allocator_type::const_pointer const_pointer;
     typedef std::size_t size_type;
 private:
-    template <class IterType, class RefType, class PtrType, class DequeType>
+    template <class IterType, class RefType, class PtrType, class DequeType, class BlockIterType>
     class DequeIterator : public std::iterator<std::random_access_iterator_tag, IterType> {
     public:
         typedef std::ptrdiff_t difference_type;
     private:
         difference_type n_;
+        BlockIterType block_iter_;
+        PtrType in_block_iter_;
         DequeType *deque_;
         DequeIterator(std::size_t n, DequeType *deque) :
-                n_(n), deque_(deque)
-        {}
+                n_(n), deque_(deque) {
+            normalize();
+        }
+        void normalize() {
+            auto p = deque_->get_item_index(n_);
+            block_iter_ = deque_->current_.begin() + p.first;
+            in_block_iter_ = (block_iter_ == deque_->current_.end()) ? nullptr : (*block_iter_)->begin + p.second;
+        }
     public:
-        DequeIterator() : n_(0), deque_(nullptr) {}
-        DequeIterator(const DequeIterator &other) : n_(other.n_), deque_(other.deque_) {}
+        DequeIterator() : n_(0), block_iter_(), in_block_iter_(nullptr), deque_(nullptr) {}
+        DequeIterator(const DequeIterator &other) :
+                n_(other.n_),
+                block_iter_(other.block_iter_),
+                in_block_iter_(other.in_block_iter_),
+                deque_(other.deque_) {}
+
         DequeIterator &operator =(const DequeIterator &other) {
             n_ = other.n_;
+            block_iter_ = other.block_iter_;
+            in_block_iter_ = other.in_block_iter_;
             deque_ = other.deque_;
             return *this;
         }
@@ -52,32 +67,42 @@ private:
         }
 
         RefType operator *() const {
-            return deque_->at(n_);
+            return *in_block_iter_;
         }
 
         PtrType operator ->() const {
-            return &deque_->at(n_);
+            return in_block_iter_;
         }
 
         DequeIterator &operator ++() {
             ++n_;
+            ++in_block_iter_;
+            if (in_block_iter_ == (*block_iter_)->end) {
+                ++block_iter_;
+                in_block_iter_ = (block_iter_ == deque_->current_.end()) ? nullptr : (*block_iter_)->begin;
+            }
             return *this;
         }
 
         const DequeIterator operator ++(int) {
             DequeIterator ans = *this;
-            ++n_;
+            ++(*this);
             return ans;
         }
 
         DequeIterator &operator --() {
             --n_;
+            if (in_block_iter_ == (*block_iter_)->begin) {
+                --block_iter_;
+                in_block_iter_ = (*block_iter_)->end;
+            }
+            --in_block_iter_;
             return *this;
         }
 
         const DequeIterator operator --(int) {
             DequeIterator ans = *this;
-            --n_;
+            --(*this);
             return ans;
         }
 
@@ -129,11 +154,13 @@ private:
         }
         DequeIterator &operator +=(difference_type diff) {
             n_ += diff;
+            normalize();
             return *this;
         }
 
         DequeIterator &operator -=(difference_type diff) {
-            n_ -= diff;
+            n_ += diff;
+            normalize();
             return *this;
         }
 
@@ -255,8 +282,8 @@ private:
     }
 
 public:
-    typedef DequeIterator<value_type, reference, pointer, Deque<T, Allocator>> iterator;
-    typedef DequeIterator<const value_type, const_reference, const_pointer, const Deque<T, Allocator>> const_iterator;
+    typedef DequeIterator<value_type, reference, pointer, Deque<T, Allocator>, typename RingBuffer<DataBlock *>::iterator> iterator;
+    typedef DequeIterator<const value_type, const_reference, const_pointer, const Deque<T, Allocator>, typename RingBuffer<DataBlock *>::const_iterator> const_iterator;
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
     typedef typename std::iterator_traits<iterator>::difference_type difference_type;
@@ -466,14 +493,6 @@ public:
 
     const_reverse_iterator crend() const {
         return const_reverse_iterator(begin());
-    }
-
-    size_t getBlocksCount() const {
-        return current_.size();
-    }
-
-    const RingBuffer<DataBlock *> &getBlocks() const {
-        return current_;
     }
 };
 
